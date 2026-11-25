@@ -672,7 +672,9 @@ fn canonical_deny_above_root_and_unsafe_rel_path_blocked() {
 
     let mut deny_ctx = DenyContext::default_for_test();
     // Deny the canonical target via DenyContext::windows_dir
-    deny_ctx.windows_dir = protected_dir.to_string_lossy().into_owned();
+    let canon_protected =
+        std::fs::canonicalize(&protected_dir).expect("canonicalize protected_dir");
+    deny_ctx.windows_dir = canon_protected.to_string_lossy().into_owned();
 
     let planned_root = PlannedRoot {
         root_path: stealth_root.to_string_lossy().into_owned(),

@@ -34,6 +34,31 @@ fn helper_ipc_integration_ping_scan_plan_and_shutdown() {
     let journal_dir = tempfile::tempdir().expect("journal dir");
     let journal_path = journal_dir.path().join("journal.db");
 
+    if dsk_core::win::is_elevated() {
+        // Security boundary: an elevated helper must refuse test-only overrides with exit code 2.
+        let out = Command::new(helper_exe)
+            .args([
+                "--pipe",
+                &pipe_name,
+                "--idle-timeout-secs",
+                "15",
+                "--allow-unelevated-test",
+                "--expected-client-dir",
+                test_dir,
+                "--test-journal",
+                journal_path.to_str().unwrap(),
+            ])
+            .output()
+            .expect("spawn elevated dsk-helper refusal check");
+        assert_eq!(out.status.code(), Some(2));
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        assert!(
+            stderr.contains("disallowed when running elevated"),
+            "unexpected stderr: {stderr}"
+        );
+        return;
+    }
+
     let mut child = Command::new(helper_exe)
         .args([
             "--pipe",

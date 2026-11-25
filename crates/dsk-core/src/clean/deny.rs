@@ -43,19 +43,35 @@ impl DenyContext {
 
     /// Discovers system and user profile paths from the current process environment.
     pub fn from_env() -> Self {
+        fn canonicalize_if_exists(raw: String) -> String {
+            std::fs::canonicalize(&raw)
+                .ok()
+                .map(|p| {
+                    let s = p.to_string_lossy();
+                    s.strip_prefix(r"\\?\").unwrap_or(&s).to_string()
+                })
+                .unwrap_or(raw)
+        }
+
         let system_drive = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
-        let windows_dir = std::env::var("SystemRoot")
-            .or_else(|_| std::env::var("windir"))
-            .unwrap_or_else(|_| r"C:\Windows".into());
-        let program_data =
-            std::env::var("ProgramData").unwrap_or_else(|_| r"C:\ProgramData".into());
-        let program_files =
-            std::env::var("ProgramFiles").unwrap_or_else(|_| r"C:\Program Files".into());
+        let windows_dir = canonicalize_if_exists(
+            std::env::var("SystemRoot")
+                .or_else(|_| std::env::var("windir"))
+                .unwrap_or_else(|_| r"C:\Windows".into()),
+        );
+        let program_data = canonicalize_if_exists(
+            std::env::var("ProgramData").unwrap_or_else(|_| r"C:\ProgramData".into()),
+        );
+        let program_files = canonicalize_if_exists(
+            std::env::var("ProgramFiles").unwrap_or_else(|_| r"C:\Program Files".into()),
+        );
         let mut user_profiles = Vec::new();
         if let Ok(prof) = std::env::var("USERPROFILE") {
-            user_profiles.push(prof);
+            user_profiles.push(canonicalize_if_exists(prof));
         }
-        let local_app_data = std::env::var("LOCALAPPDATA").ok();
+        let local_app_data = std::env::var("LOCALAPPDATA")
+            .ok()
+            .map(canonicalize_if_exists);
 
         Self {
             system_drive,
