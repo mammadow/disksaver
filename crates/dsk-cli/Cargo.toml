@@ -1,0 +1,27 @@
+[package]
+name = "dsk-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "DiskSaver CLI for precision disk analysis, safe cleanup, reclaim planning, and storage optimization"
+
+[[bin]]
+name = "disksaver"
+path = "src/main.rs"
+
+[dependencies]
+dsk-core = { path = "../dsk-core" }
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+ctrlc = "3.4"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.1"
+tempfile = "3.17"
+serde_json = "1.0"

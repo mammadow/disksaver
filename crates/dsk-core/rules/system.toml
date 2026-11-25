@@ -1,0 +1,333 @@
+# System cleanup rules and curated Windows VolumeCaches handlers
+
+[[rule]]
+id = "os.vc.update_cleanup"
+name = "Update Cleanup"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Windows Update component store cleanup via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Update Cleanup" }
+
+[[rule]]
+id = "os.vc.delivery_optimization"
+name = "Delivery Optimization Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Delivery optimization download cache via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Delivery Optimization Files" }
+
+[[rule]]
+id = "os.vc.temp_setup"
+name = "Temporary Setup Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Temporary installation and setup files via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Temporary Setup Files" }
+
+[[rule]]
+id = "os.vc.old_chkdsk"
+name = "Old ChkDsk Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Recovered file fragments from previous check disk scans via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Old ChkDsk Files" }
+
+[[rule]]
+id = "os.vc.setup_logs"
+name = "Setup Log Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Windows setup and installation log files via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Setup Log Files" }
+
+[[rule]]
+id = "os.vc.memory_dumps"
+name = "System Error Memory Dump Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Full system crash memory dumps via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "System error memory dump files" }
+
+[[rule]]
+id = "os.vc.minidumps"
+name = "System Error Minidump Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Small kernel memory dumps from system crashes via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "System error minidump files" }
+
+[[rule]]
+id = "os.vc.wer"
+name = "Windows Error Reporting Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "User-mode error reports and queues via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Windows Error Reporting Files" }
+
+[[rule]]
+id = "os.vc.upgrade_logs"
+name = "Windows Upgrade Log Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Logs created during Windows feature updates via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Windows Upgrade Log Files" }
+
+[[rule]]
+id = "os.vc.thumbnail_cache"
+name = "Thumbnail Cache"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "Windows Explorer thumbnail cache database files via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Thumbnail Cache" }
+
+[[rule]]
+id = "os.vc.d3d_shader"
+name = "D3D Shader Cache"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "Direct3D shader cache files via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "D3D Shader Cache" }
+
+[[rule]]
+id = "os.vc.temp_files"
+name = "Temporary Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "General user temporary files via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Temporary Files" }
+
+[[rule]]
+id = "os.vc.defender"
+name = "Windows Defender"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+explain = "Non-critical Windows Defender scan history and definition backups via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Windows Defender" }
+
+[[rule]]
+id = "os.vc.active_setup_temp"
+name = "Active Setup Temp Folders"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "Temporary folders left by legacy component initialization via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Active Setup Temp Folders" }
+
+[[rule]]
+id = "os.vc.temp_sync"
+name = "Temporary Sync Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "Temporary sync files via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Temporary Sync Files" }
+
+[[rule]]
+id = "os.vc.diag_data"
+name = "Diagnostic Data Viewer Database Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+explain = "Diagnostic data viewer local cache via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Diagnostic Data Viewer database files" }
+
+[[rule]]
+id = "os.vc.recycle_bin"
+name = "Recycle Bin"
+category = "system"
+tier = "safe"
+regenerable = false
+requires_admin = false
+default_enabled = false
+explain = "Empty deleted items from the Recycle Bin (opt-in only)"
+method = { kind = "os_handler", handler_key = "Recycle Bin" }
+
+[[rule]]
+id = "sys.temp.windows"
+name = "Windows System Temp"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = ["%SystemRoot%\\Temp"]
+min_age_days = 2
+explain = "Temporary files created by system services older than 2 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.temp.system"
+name = "System Temp Folder"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = ["%SystemRoot%\\SystemTemp"]
+min_age_days = 2
+explain = "Secondary system temporary folder older than 2 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.temp.user"
+name = "User Temp Files"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+paths = ["%TEMP%"]
+min_age_days = 2
+explain = "User temporary folder files older than 2 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.dumps.memory"
+name = "Kernel Reports and Minidumps"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = ["%SystemRoot%\\LiveKernelReports", "%SystemRoot%\\Minidump"]
+min_age_days = 7
+explain = "Kernel crash minidumps and live reports older than 7 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.wer"
+name = "System Windows Error Reporting"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = [
+    "%ProgramData%\\Microsoft\\Windows\\WER\\ReportArchive",
+    "%ProgramData%\\Microsoft\\Windows\\WER\\ReportQueue",
+    "%ProgramData%\\Microsoft\\Windows\\WER\\Temp",
+]
+min_age_days = 2
+explain = "System-level Windows error reporting archives and queued reports older than 2 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.user.crashdumps"
+name = "User Crash Dumps"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = false
+paths = ["%LOCALAPPDATA%\\CrashDumps"]
+min_age_days = 2
+explain = "Application crash dumps in user profile older than 2 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.cbs.logs"
+name = "Component-Based Servicing Logs"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = ["%SystemRoot%\\Logs\\CBS"]
+min_age_days = 14
+preconditions = { exclude_names = ["CBS.log"] }
+explain = "Historical CBS servicing logs and persist archives older than 14 days, preserving active CBS.log"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.panther.logs"
+name = "Panther and Servicing Logs"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = [
+    "%SystemRoot%\\Panther",
+    "%SystemRoot%\\Logs\\DISM",
+    "%SystemRoot%\\Logs\\WindowsUpdate",
+]
+min_age_days = 30
+explain = "Windows installation, DISM, and update logs older than 30 days"
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "sys.drivers.leftovers"
+name = "Driver Installer Leftovers"
+category = "system"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = ["%SystemDrive%\\NVIDIA", "%SystemDrive%\\AMD", "%SystemDrive%\\Intel"]
+explain = "Extracted installer leftovers on system drive root created during driver updates"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "sys.winsxs.cleanup"
+name = "Component Store Cleanup"
+category = "system"
+tier = "review"
+regenerable = true
+requires_admin = true
+default_enabled = false
+explain = "Windows Component Store (WinSxS) cleanup via DISM (/StartComponentCleanup)"
+method = { kind = "dism_component_cleanup", reset_base = false }
+
+[[rule]]
+id = "sys.winsxs.resetbase"
+name = "Component Store ResetBase"
+category = "system"
+tier = "advanced"
+regenerable = false
+requires_admin = true
+default_enabled = false
+explain = "Windows Component Store resetbase via DISM (/ResetBase) - frees significant space but makes installed updates irreversible"
+method = { kind = "dism_component_cleanup", reset_base = true }
+
+[[rule]]
+id = "sys.driverstore.orphans"
+name = "Driver Store Superseded Packages"
+category = "system"
+tier = "review"
+regenerable = true
+requires_admin = true
+default_enabled = false
+explain = "Prunes superseded non-active device drivers via pnputil, retaining currently bound drivers and newest rollback version"
+method = { kind = "driver_store_prune" }
+
+[[rule]]
+id = "sys.windows.old"
+name = "Previous Windows Installations"
+category = "system"
+tier = "review"
+regenerable = false
+requires_admin = true
+default_enabled = false
+explain = "Previous Windows installations (Windows.old) via native Disk Cleanup handler"
+method = { kind = "os_handler", handler_key = "Previous Installations" }
+

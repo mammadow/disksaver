@@ -1,0 +1,99 @@
+# Web browser cache cleanup rules (strictly caches; never cookies/history/logins)
+
+[[rule]]
+id = "browser.chrome.cache"
+name = "Google Chrome Cache"
+category = "browsers"
+tier = "safe"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\GrShaderCache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\ShaderCache",
+    "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\*\\Service Worker\\CacheStorage",
+]
+preconditions = { process_not_running = ["chrome.exe"] }
+explain = "Google Chrome web, shader, and code caches across all profiles (excluding cookies/history)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "browser.edge.cache"
+name = "Microsoft Edge Cache"
+category = "browsers"
+tier = "safe"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\GrShaderCache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\ShaderCache",
+    "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\*\\Service Worker\\CacheStorage",
+]
+preconditions = { process_not_running = ["msedge.exe"] }
+explain = "Microsoft Edge web, shader, and code caches across all profiles (excluding cookies/history)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "browser.brave.cache"
+name = "Brave Browser Cache"
+category = "browsers"
+tier = "safe"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\GrShaderCache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\ShaderCache",
+    "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Service Worker\\CacheStorage",
+]
+preconditions = { process_not_running = ["brave.exe"] }
+explain = "Brave Browser web, shader, and code caches across all profiles (excluding cookies/history)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "browser.opera.cache"
+name = "Opera Browser Cache"
+category = "browsers"
+tier = "safe"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\Cache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\GPUCache",
+    "%LOCALAPPDATA%\\Opera Software\\Opera Stable\\ShaderCache",
+]
+preconditions = { process_not_running = ["opera.exe"] }
+explain = "Opera Browser web and shader caches (excluding cookies/history)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "browser.vivaldi.cache"
+name = "Vivaldi Browser Cache"
+category = "browsers"
+tier = "safe"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Cache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Code Cache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\GPUCache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\GrShaderCache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\ShaderCache",
+    "%LOCALAPPDATA%\\Vivaldi\\User Data\\*\\Service Worker\\CacheStorage",
+]
+preconditions = { process_not_running = ["vivaldi.exe"] }
+explain = "Vivaldi Browser web, shader, and code caches across all profiles (excluding cookies/history)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "browser.firefox.cache"
+name = "Mozilla Firefox Cache"
+category = "browsers"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\Mozilla\\Firefox\\Profiles\\*\\cache2"]
+preconditions = { process_not_running = ["firefox.exe"] }
+explain = "Mozilla Firefox disk cache across all profiles (excluding cookies/logins/history)"
+method = { kind = "delete_contents" }

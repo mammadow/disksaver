@@ -1,0 +1,53 @@
+# Gaming platform and launcher cache cleanup rules
+
+[[rule]]
+id = "gaming.steam.downloading"
+name = "Steam Downloading and Temp"
+category = "gaming"
+tier = "safe"
+regenerable = true
+paths = [
+    "%ProgramFiles(x86)%\\Steam\\steamapps\\downloading",
+    "%ProgramFiles(x86)%\\Steam\\steamapps\\temp",
+    "%DSK_STEAM_LIBRARIES%\\steamapps\\downloading",
+    "%DSK_STEAM_LIBRARIES%\\steamapps\\temp",
+]
+preconditions = { process_not_running = ["steam.exe"] }
+explain = "Stale temporary download and staging chunks from Steam games"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "gaming.steam.shadercache"
+name = "Steam Shader Cache"
+category = "gaming"
+tier = "safe"
+regenerable = true
+paths = [
+    "%ProgramFiles(x86)%\\Steam\\steamapps\\shadercache",
+    "%DSK_STEAM_LIBRARIES%\\steamapps\\shadercache",
+]
+preconditions = { process_not_running = ["steam.exe"] }
+explain = "Pre-compiled graphics shaders for Steam games (recompiled or redownloaded on launch)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "gaming.steam.workshop_orphans"
+name = "Steam Workshop Content of Uninstalled Games"
+category = "gaming"
+tier = "safe"
+regenerable = true
+paths = ["%DSK_STEAM_ORPHAN_WORKSHOP%"]
+preconditions = { process_not_running = ["steam.exe"] }
+explain = "Workshop items (mods, maps) of games no longer installed in any Steam library; Steam downloads them again if the game is reinstalled."
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "gaming.redist"
+name = "Game Redistributable Installers"
+category = "gaming"
+tier = "safe"
+regenerable = true
+paths = ["%DSK_GAME_REDIST%"]
+preconditions = { process_not_running = ["steam.exe"] }
+explain = "VC++, DirectX, and .NET installers shipped with games and already applied; Steam restores them if you verify the game's files."
+method = { kind = "delete_contents" }

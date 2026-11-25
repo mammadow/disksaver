@@ -1,0 +1,93 @@
+# Desktop application cache cleanup rules
+
+[[rule]]
+id = "app.vscode.cache"
+name = "Visual Studio Code Cache"
+category = "apps"
+tier = "safe"
+regenerable = true
+paths = [
+    "%APPDATA%\\Code\\Cache",
+    "%APPDATA%\\Code\\CachedData",
+    "%APPDATA%\\Code\\Code Cache",
+    "%APPDATA%\\Code\\GPUCache",
+]
+preconditions = { process_not_running = ["Code.exe"] }
+explain = "Visual Studio Code editor code, shader, and runtime caches"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "app.discord.cache"
+name = "Discord Cache"
+category = "apps"
+tier = "safe"
+regenerable = true
+paths = [
+    "%APPDATA%\\discord\\Cache",
+    "%APPDATA%\\discord\\Code Cache",
+    "%APPDATA%\\discord\\GPUCache",
+]
+preconditions = { process_not_running = ["Discord.exe"] }
+explain = "Discord desktop app media and shader caches"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "app.slack.cache"
+name = "Slack Cache"
+category = "apps"
+tier = "safe"
+regenerable = true
+paths = [
+    "%APPDATA%\\Slack\\Cache",
+    "%APPDATA%\\Slack\\Code Cache",
+    "%APPDATA%\\Slack\\GPUCache",
+]
+preconditions = { process_not_running = ["slack.exe"] }
+explain = "Slack desktop client media and shader caches"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "app.spotify.cache"
+name = "Spotify Cache"
+category = "apps"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\Spotify\\Storage"]
+preconditions = { process_not_running = ["Spotify.exe"] }
+explain = "Spotify desktop client local song streaming and artwork cache"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "app.office.cache"
+name = "Microsoft Office File Cache"
+category = "apps"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\Microsoft\\Office\\16.0\\OfficeFileCache"]
+preconditions = { process_not_running = ["OUTLOOK.EXE", "WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE"] }
+explain = "Microsoft Office document editing and sync cache"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "app.vscode.vsix_cache"
+name = "VS Code Extension Package Cache"
+category = "apps"
+tier = "safe"
+regenerable = true
+paths = [
+    "%APPDATA%\\Code\\CachedExtensionVSIXs",
+    "%APPDATA%\\Cursor\\CachedExtensionVSIXs",
+]
+preconditions = { process_not_running = ["Code.exe", "Cursor.exe"] }
+explain = "Copies of extension packages kept after installing them; downloaded again only to reinstall an extension."
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "app.electron.updater"
+name = "Electron App Update Installers"
+category = "apps"
+tier = "review"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\*-updater"]
+explain = "Installers Electron apps (electron-updater) keep for their next update. The next update then downloads in full instead of as a small patch."
+method = { kind = "delete_contents" }

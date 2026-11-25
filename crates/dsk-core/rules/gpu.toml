@@ -1,0 +1,66 @@
+# GPU driver caches and driver payloads
+
+[[rule]]
+id = "gpu.nvidia.shadercache.stale"
+name = "NVIDIA Shader Cache (unused 30+ days)"
+category = "gpu"
+tier = "review"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\NVIDIA\\DXCache",
+    "%LOCALAPPDATA%\\NVIDIA\\GLCache",
+    "%USERPROFILE%\\AppData\\LocalLow\\NVIDIA\\PerDriverVersion\\DXCache",
+]
+min_age_days = 30
+explain = "Compiled shaders of games not played for 30+ days. Those games stutter briefly the next time while shaders rebuild. To stop regrowth, cap NVIDIA Control Panel > Shader Cache Size."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "gpu.amd.shadercache.stale"
+name = "AMD Shader Cache (unused 30+ days)"
+category = "gpu"
+tier = "review"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\AMD\\DxCache",
+    "%LOCALAPPDATA%\\AMD\\DxcCache",
+    "%LOCALAPPDATA%\\AMD\\VkCache",
+]
+min_age_days = 30
+explain = "Compiled shaders of games not played for 30+ days; rebuilt on the next launch (brief stutter)."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "gpu.intel.shadercache.stale"
+name = "Intel Shader Cache (unused 30+ days)"
+category = "gpu"
+tier = "review"
+regenerable = true
+paths = ["%USERPROFILE%\\AppData\\LocalLow\\Intel\\ShaderCache"]
+min_age_days = 30
+explain = "Compiled shaders of games not played for 30+ days; rebuilt on the next launch (brief stutter)."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "gpu.nvidia.downloader"
+name = "NVIDIA Downloaded Driver Installers"
+category = "gpu"
+tier = "safe"
+regenerable = true
+requires_admin = true
+paths = ["%ProgramData%\\NVIDIA Corporation\\Downloader"]
+min_age_days = 7
+explain = "Driver packages NVIDIA software downloaded for installation; downloaded again if ever needed."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "gpu.nvidia.app_ota"
+name = "NVIDIA App Update Payloads"
+category = "gpu"
+tier = "review"
+regenerable = true
+requires_admin = true
+paths = ["%ProgramData%\\NVIDIA Corporation\\NVIDIA App\\UpdateFramework\\ota-artifacts"]
+min_age_days = 30
+explain = "Driver and NVIDIA app installers (and their unpacked copies) kept after installation, untouched for 30+ days. The NVIDIA app downloads them again if it needs them."
+method = { kind = "delete_older_than" }

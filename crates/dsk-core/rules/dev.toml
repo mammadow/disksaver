@@ -1,0 +1,204 @@
+# Developer tools and package manager cache cleanup rules
+
+[[rule]]
+id = "dev.npm.cache"
+name = "npm Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = [
+    "%npm_config_cache%\\_cacache",
+    "%LOCALAPPDATA%\\npm-cache\\_cacache",
+]
+explain = "Prunes npm download cache via npm cache clean or directory purge"
+method = { kind = "command", program = "npm", args = ["cache", "clean", "--force"], fallback_delete_contents = true, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.pnpm.store"
+name = "pnpm Store"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\pnpm\\store"]
+explain = "Prunes unreferenced packages from the stateful pnpm content-addressable store via pnpm store prune"
+method = { kind = "command", program = "pnpm", args = ["store", "prune"], fallback_delete_contents = false, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.yarn.cache"
+name = "Yarn Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\Yarn\\Cache"]
+explain = "Cleans Yarn package cache via yarn cache clean or directory purge"
+method = { kind = "command", program = "yarn", args = ["cache", "clean"], fallback_delete_contents = true, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.pip.cache"
+name = "pip Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = [
+    "%PIP_CACHE_DIR%",
+    "%LOCALAPPDATA%\\pip\\Cache",
+]
+explain = "Purges pip wheel and HTTP cache via pip cache purge or directory purge"
+method = { kind = "command", program = "pip", args = ["cache", "purge"], fallback_delete_contents = true, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.uv.cache"
+name = "uv Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\uv\\cache"]
+explain = "Prunes stateful uv cache via uv cache prune (never deleted raw)"
+method = { kind = "command", program = "uv", args = ["cache", "prune"], fallback_delete_contents = false, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.cargo.cache"
+name = "Cargo Registry Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = [
+    "%CARGO_HOME%\\registry\\cache",
+    "%USERPROFILE%\\.cargo\\registry\\cache",
+]
+explain = "Downloaded .crate archive cache from crates.io (safe to delete; redownloaded on demand)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "dev.go.build"
+name = "Go Build Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = [
+    "%GOCACHE%",
+    "%LOCALAPPDATA%\\go-build",
+]
+explain = "Cleans Go build and action cache via go clean -cache"
+method = { kind = "command", program = "go", args = ["clean", "-cache"], fallback_delete_contents = true, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.nuget.cache"
+name = "NuGet HTTP Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\NuGet\\v3-cache"]
+explain = "Clears NuGet v3 HTTP response cache via dotnet nuget locals"
+method = { kind = "command", program = "dotnet", args = ["nuget", "locals", "all", "--clear"], fallback_delete_contents = true, timeout_secs = 60 }
+
+[[rule]]
+id = "dev.winget.diag"
+name = "winget Diagnostic Output"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = ["%LOCALAPPDATA%\\Packages\\Microsoft.DesktopAppInstaller_*\\LocalState\\DiagOutputDir"]
+explain = "Diagnostic log and dump output from Windows Package Manager (winget)"
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "dev.conda.pkgs"
+name = "Conda Package Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = [
+    "%USERPROFILE%\\miniconda3\\pkgs",
+    "%USERPROFILE%\\anaconda3\\pkgs",
+    "%USERPROFILE%\\.conda\\pkgs",
+]
+explain = "conda clean --all: removes downloaded tarballs and packages no environment uses. Packages hard-linked into environments stay, so the freed amount can be lower than the folder size."
+method = { kind = "command", program = "conda", args = ["clean", "--all", "--yes"], fallback_delete_contents = false, timeout_secs = 600, program_candidates = ["%USERPROFILE%\\miniconda3\\Scripts\\conda.exe", "%USERPROFILE%\\anaconda3\\Scripts\\conda.exe"] }
+
+[[rule]]
+id = "dev.gradle.caches"
+name = "Gradle Caches (unused 60+ days)"
+category = "dev"
+tier = "review"
+regenerable = true
+paths = [
+    "%GRADLE_USER_HOME%\\caches",
+    "%USERPROFILE%\\.gradle\\caches",
+]
+min_age_days = 60
+explain = "Dependency and build caches Gradle has not touched for 60+ days; downloaded or rebuilt on the next build that needs them."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "dev.gradle.wrapper"
+name = "Old Gradle Distributions"
+category = "dev"
+tier = "review"
+regenerable = true
+paths = ["%USERPROFILE%\\.gradle\\wrapper\\dists"]
+min_age_days = 90
+explain = "Gradle versions downloaded by the wrapper and unused for 90+ days; a project that needs one downloads it again."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "dev.maven.repo"
+name = "Maven Repository (unused 120+ days)"
+category = "dev"
+tier = "review"
+regenerable = true
+paths = ["%USERPROFILE%\\.m2\\repository"]
+min_age_days = 120
+explain = "Artifacts Maven has not touched for 120+ days; downloaded again by the next build that needs them."
+method = { kind = "delete_older_than" }
+
+[[rule]]
+id = "dev.go.modcache"
+name = "Go Module Cache"
+category = "dev"
+tier = "review"
+regenerable = true
+paths = [
+    "%GOMODCACHE%",
+    "%USERPROFILE%\\go\\pkg\\mod",
+]
+explain = "go clean -modcache: every downloaded Go module; fetched again on the next build."
+method = { kind = "command", program = "go", args = ["clean", "-modcache"], fallback_delete_contents = false, timeout_secs = 300 }
+
+[[rule]]
+id = "dev.bun.cache"
+name = "Bun Install Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = ["%USERPROFILE%\\.bun\\install\\cache"]
+explain = "Packages bun downloaded before; fetched again on the next install."
+method = { kind = "command", program = "bun", args = ["pm", "cache", "rm"], fallback_delete_contents = true, timeout_secs = 120 }
+
+[[rule]]
+id = "dev.poetry.cache"
+name = "Poetry Download Cache"
+category = "dev"
+tier = "safe"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\pypoetry\\Cache\\cache",
+    "%LOCALAPPDATA%\\pypoetry\\Cache\\artifacts",
+]
+explain = "Packages Poetry downloaded before (its virtualenvs folder is not touched); fetched again on the next install."
+method = { kind = "delete_contents" }
+
+[[rule]]
+id = "dev.browsers.automation"
+name = "Test Browser Downloads (unused 60+ days)"
+category = "dev"
+tier = "review"
+regenerable = true
+paths = [
+    "%LOCALAPPDATA%\\ms-playwright",
+    "%USERPROFILE%\\.cache\\selenium",
+    "%USERPROFILE%\\.cache\\puppeteer",
+]
+min_age_days = 60
+explain = "Browser builds downloaded by Playwright, Selenium, and Puppeteer and unused for 60+ days; the test tools download them again on demand."
+method = { kind = "delete_older_than" }

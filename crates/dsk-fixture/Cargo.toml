@@ -1,0 +1,20 @@
+[package]
+name = "dsk-fixture"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "NTFS test fixture generator for DiskSaver MFT-vs-Win32 equivalence verification"
+
+[dependencies]
+windows = { version = "0.62", features = [
+    "Win32_Foundation",
+    "Win32_System_IO",
+    "Win32_System_Ioctl",
+] }
+
+[dev-dependencies]
+dsk-core = { path = "../dsk-core" }
+tempfile = "3.17"

@@ -1,0 +1,30 @@
+[package]
+name = "dsk-gui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "GPU-accelerated desktop GUI for DiskSaver built with eframe and wgpu"
+
+[[bin]]
+name = "disksaver-gui"
+path = "src/main.rs"
+
+[dependencies]
+dsk-core = { path = "../dsk-core" }
+eframe = { version = "0.37.0", default-features = false, features = [
+    "accesskit",
+    "clipboard",
+    "default_fonts",
+    "links",
+    "system_fonts",
+    "wgpu",
+] }
+crossbeam-channel = "0.5"
+rustc-hash = "2.1"
+serde_json = "1.0"
+
+[dev-dependencies]
+tempfile = "3.17"

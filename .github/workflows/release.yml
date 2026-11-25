@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+# Default to read-only; only the packaging job (which publishes the release) may write.
+permissions:
+  contents: read
+
+jobs:
+  package-windows:
+    name: Build & Package Windows x86_64
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Verify tag matches workspace version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $tagVersion = "${{ github.ref_name }}".TrimStart('v', 'V')
+          $cargo = Get-Content -Raw Cargo.toml
+          if ($cargo -notmatch '(?m)^version\s*=\s*"([^"]+)"') { throw "workspace version not found in Cargo.toml" }
+          if ($Matches[1] -ne $tagVersion) {
+            throw "tag $tagVersion does not match Cargo.toml workspace version $($Matches[1])"
+          }
+
+      - name: Format check
+        run: cargo fmt --all --check
+
+      - name: Clippy check
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Run workspace tests
+        run: cargo test --workspace
+
+      - name: Build & package release archive
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ($tag -like "v*") {
+            .\scripts\package-release.ps1 -Version $tag
+          } else {
+            .\scripts\package-release.ps1
+          }
+
+      - name: Verify tray binary memory budget (< 20 MiB)
+        shell: pwsh
+        run: |
+          $json = .\target\release\disksaver-tray.exe --check-once --json | Out-String
+          Write-Host $json
+          $rep = $json | ConvertFrom-Json
+          if ($rep.peak_working_set_bytes -ge (20 * 1024 * 1024)) {
+            throw "disksaver-tray.exe working set $($rep.peak_working_set_bytes) exceeded 20 MiB"
+          }
+
+      - name: Publish GitHub Release artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            target/dist/*.zip
+            target/dist/SHA256SUMS.txt
