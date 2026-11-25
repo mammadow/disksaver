@@ -974,7 +974,7 @@ pub fn launch_elevated_helper(helper_exe: &Path, pipe_name: &str) -> Result<u32>
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use crate::ipc::{
         HelperRequest, HelperResponse, MAX_CONTROL_FRAME_BYTES, read_frame, write_frame,
@@ -1177,15 +1177,33 @@ mod tests {
         assert!(sddl_allows_non_admin_rename("O:BAD:P(A;;WD;;;BU)"));
     }
 
+    /// Creates a temporary directory at its canonical DOS path and grants `BUILTIN\Users`
+    /// (`*S-1-5-32-545`) inheritable Modify permissions so ACL tests do not depend on whether the
+    /// test runner executes as a standard user or an Administrator (`runneradmin` on CI).
+    pub(crate) fn make_user_writable_tempdir() -> (tempfile::TempDir, PathBuf) {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let canon = std::fs::canonicalize(tmp.path()).expect("canonicalize tempdir");
+        let s = canon.to_string_lossy();
+        let dos_path = PathBuf::from(s.strip_prefix(r"\\?\").unwrap_or(&s));
+        let icacls = crate::win::volume::system32_dir().join("icacls.exe");
+        let status = std::process::Command::new(icacls)
+            .arg(&dos_path)
+            .args(["/grant", "*S-1-5-32-545:(OI)(CI)M", "/Q"])
+            .status()
+            .expect("invoke icacls");
+        assert!(status.success(), "icacls /grant failed: {status}");
+        (tmp, dos_path)
+    }
+
     #[test]
     fn live_writability_checks_fail_closed_and_match_system_dirs() {
         let missing = Path::new(r"C:\DiskSaverDefinitelyMissingDir\nested");
         assert!(is_directory_user_writable(missing));
         assert!(is_directory_user_renamable(missing));
 
-        let tmp = tempfile::tempdir().expect("tempdir");
-        assert!(is_directory_user_writable(tmp.path()));
-        assert!(is_directory_user_renamable(tmp.path()));
+        let (_tmp, dir) = make_user_writable_tempdir();
+        assert!(is_directory_user_writable(&dir));
+        assert!(is_directory_user_renamable(&dir));
 
         let windir = crate::win::volume::system32_dir();
         let windir = windir.parent().expect("windows dir");

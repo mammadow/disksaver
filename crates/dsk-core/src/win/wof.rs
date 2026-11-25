@@ -285,8 +285,9 @@ pub fn wof_compress_file(path: &Path, root: &Path, algo: WofAlgorithm) -> WofFil
     if wof_file_algorithm(path).is_some() {
         return WofFileOutcome::Skipped("already WOF-compressed");
     }
+    let canonical_root = std::fs::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
     match crate::win::cleaner::final_path_by_handle(handle.0) {
-        Ok(final_path) if crate::clean::deny::is_under_root(&final_path, root) => {}
+        Ok(final_path) if crate::clean::deny::is_under_root(&final_path, &canonical_root) => {}
         Ok(final_path) => {
             return WofFileOutcome::Failed(format!(
                 "resolves outside the folder: {}",

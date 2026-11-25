@@ -585,11 +585,11 @@ mod tests {
         let pf_issues = install_preflight_issues(&program_files_dir().join("DiskSaverProbe"));
         assert!(pf_issues.is_empty(), "unexpected issues: {pf_issues:?}");
 
-        let tmp = tempfile::tempdir().expect("tempdir");
-        let issues = install_preflight_issues(&tmp.path().join("DiskSaver"));
+        let (_tmp, dir) = crate::win::pipe::tests::make_user_writable_tempdir();
+        let issues = install_preflight_issues(&dir.join("DiskSaver"));
         assert!(issues.iter().any(|i| i.contains("ancestor")), "{issues:?}");
 
-        let missing_parent = tmp.path().join("missing").join("DiskSaver");
+        let missing_parent = dir.join("missing").join("DiskSaver");
         let issues = install_preflight_issues(&missing_parent);
         assert!(
             issues.iter().any(|i| i.contains("does not exist")),
@@ -599,13 +599,13 @@ mod tests {
 
     #[test]
     fn untrusted_entries_flag_user_owned_files_but_skip_replaced_binaries() {
-        let tmp = tempfile::tempdir().expect("tempdir");
-        std::fs::write(tmp.path().join("version.dll"), b"planted").expect("dll");
-        std::fs::write(tmp.path().join("dsk-helper.exe"), b"old").expect("exe");
+        let (_tmp, dir) = crate::win::pipe::tests::make_user_writable_tempdir();
+        std::fs::write(dir.join("version.dll"), b"planted").expect("dll");
+        std::fs::write(dir.join("dsk-helper.exe"), b"old").expect("exe");
 
         let untrusted =
-            untrusted_install_dir_entries(tmp.path(), &["DSK-HELPER.EXE"]).expect("enumerate");
-        assert_eq!(untrusted, vec![tmp.path().join("version.dll")]);
+            untrusted_install_dir_entries(&dir, &["DSK-HELPER.EXE"]).expect("enumerate");
+        assert_eq!(untrusted, vec![dir.join("version.dll")]);
     }
 
     #[test]
