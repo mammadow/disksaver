@@ -384,14 +384,10 @@ pub fn render(
                 {
                     return false;
                 }
-                if !q.is_empty()
-                    && !r.name.to_lowercase().contains(&q)
-                    && !r.rule_id.to_lowercase().contains(&q)
-                    && !r.explain.to_lowercase().contains(&q)
-                {
-                    return false;
-                }
-                true
+                q.is_empty()
+                    || r.name.to_lowercase().contains(&q)
+                    || r.rule_id.to_lowercase().contains(&q)
+                    || r.explain.to_lowercase().contains(&q)
             })
             .collect();
 

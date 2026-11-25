@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
+rust-version.workspace = true
 description = "Lightweight Windows system-tray agent for DiskSaver low-space alerts and scheduled safe cleanup"
 
 [[bin]]

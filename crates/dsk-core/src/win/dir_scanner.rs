@@ -118,15 +118,11 @@ fn is_drive_root(wide: &[u16]) -> bool {
     }
     // "\\?\C:\" (len 7)
     let prefix_long = [0x005Cu16, 0x005C, 0x003F, 0x005C];
-    if wide.len() == 7
+    wide.len() == 7
         && wide.starts_with(&prefix_long)
         && (wide[4] as u8).is_ascii_alphabetic()
         && wide[5] == b':' as u16
         && wide[6] == 0x005C
-    {
-        return true;
-    }
-    false
 }
 
 fn is_unc_root(wide: &[u16]) -> bool {

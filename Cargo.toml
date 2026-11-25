@@ -10,11 +10,7 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 authors = ["Elnur Mammadov"]
 repository = "https://github.com/mammadow/disksaver"
-homepage = "https://github.com/mammadow/disksaver"
 rust-version = "1.95"
-readme = "README.md"
-keywords = ["windows", "ntfs", "disk", "cleanup", "storage"]
-categories = ["command-line-utilities", "filesystem", "os::windows-apis"]
 
 [profile.release]
 lto = "thin"

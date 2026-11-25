@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-homepage.workspace = true
+rust-version.workspace = true
 description = "Core Windows NTFS/Win32 disk analysis, TOCTOU-safe cleanup, reclaim ledger, optimizer, and verified video compression library"
 
 [dependencies]
